@@ -1,0 +1,12 @@
+**/node_modules
+**/.cache
+**/dist
+**/demo-dist
+**/build
+**/stash
+**/.secret*
+**/praw.ini
+**/*.agent
+**/bot-config.json
+packages/tipping/db.json
+package-lock.json
