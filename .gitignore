@@ -2,7 +2,6 @@
 **/.cache
 **/dist
 **/demo-dist
-**/build
 **/stash
 **/.secret*
 **/praw.ini

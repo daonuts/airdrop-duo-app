@@ -66,10 +66,10 @@ contract Template is TemplateBase {
         acl.createPermission(this, dao, dao.APP_MANAGER_ROLE(), this);
 
         address root = msg.sender;
-        bytes32 airdropAppId = keccak256(abi.encodePacked(apmNamehash("open"), keccak256("airdrop-duo-app")));
+        bytes32 airdropDuoAppId = keccak256(abi.encodePacked(apmNamehash("open"), keccak256("airdrop-duo-app")));
         bytes32 tokenManagerAppId = apmNamehash("token-manager");
 
-        AirdropDuo airdrop = AirdropDuo(dao.newAppInstance(airdropAppId, latestVersionAppBase(airdropAppId)));
+        AirdropDuo airdrop = AirdropDuo(dao.newAppInstance(airdropDuoAppId, latestVersionAppBase(airdropDuoAppId)));
         TokenManager contribManager = TokenManager(dao.newAppInstance(tokenManagerAppId, latestVersionAppBase(tokenManagerAppId)));
         TokenManager currencyManager = TokenManager(dao.newAppInstance(tokenManagerAppId, latestVersionAppBase(tokenManagerAppId)));
 
@@ -84,7 +84,7 @@ contract Template is TemplateBase {
         currencyManager.initialize(currency, true, 0);
         emit InstalledApp(currencyManager, tokenManagerAppId);
         airdrop.initialize(contribManager, currencyManager);
-        emit InstalledApp(airdrop, airdropAppId);
+        emit InstalledApp(airdrop, airdropDuoAppId);
 
         acl.createPermission(root, contribManager, contribManager.BURN_ROLE(), root);
         acl.createPermission(root, currencyManager, currencyManager.BURN_ROLE(), root);
