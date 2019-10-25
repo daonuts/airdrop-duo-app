@@ -11983,6 +11983,15 @@ trim-right@^1.0.1:
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
   integrity sha1-yy4SAwZ+DI3h9hQJS5/kVwTqYAM=
 
+truffle-extract@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/truffle-extract/-/truffle-extract-1.2.1.tgz#0581365acaaf89835c64a73661df54d862fb6ebe"
+  integrity sha512-zM3N4xKergcS6ZcH164GwuAl+bWscHthsBgWUb4yD3K7zz5O9OfxRNbyW6AwqNZph03fsUgHwe5/ivjPgniOwg==
+  dependencies:
+    mkdirp "^0.5.1"
+    rimraf "^2.6.2"
+    yargs "^12.0.1"
+
 truffle-flattener@^1.2.9:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/truffle-flattener/-/truffle-flattener-1.4.2.tgz#7460d0eec88ac67b150e8de3476f55d4420a4ba0"
@@ -13196,7 +13205,7 @@ yargs-parser@^5.0.0:
   dependencies:
     camelcase "^3.0.0"
 
-yargs@12.0.5:
+yargs@12.0.5, yargs@^12.0.1:
   version "12.0.5"
   resolved "https://registry.yarnpkg.com/yargs/-/yargs-12.0.5.tgz#05f5997b609647b64f66b81e3b4b10a368e7ad13"
   integrity sha512-Lhz8TLaYnxq/2ObqHDql8dX8CJi97oHxrjUcYtzKbbykPtVW9WB+poxI+NM2UIzsMgNCZTIf0AQwsjK5yMAqZw==
