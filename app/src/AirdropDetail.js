@@ -10,6 +10,7 @@ const NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 function Airdrop({airdrop, onBack}){
   const { api, connectedAccount } = useAragonApi()
   const { id, root, dataURI, data, awarded, userData } = airdrop
+  console.log(airdrop)
 
   const [batchSize, setBatchSize] = useState(50)
 
@@ -28,7 +29,7 @@ function Airdrop({airdrop, onBack}){
           </Field>
         </React.Fragment>}
       <section>
-        {data && <AwardsView awards={data.awards} root={root} hash={dataURI} />}
+        {data && <AwardsView awards={data.awards} root={root} ipfsHash={dataURI.replace("ipfs:","")} />}
       </section>
     </React.Fragment>
   )

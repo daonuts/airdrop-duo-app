@@ -10,8 +10,24 @@ function AwardsView({root, ipfsHash, awards}){
 
   return (
     <React.Fragment>
-      <Text>merkle root: {root}</Text>
-      <Text>ipfs hash: {ipfsHash}</Text>
+      <Table>
+        <TableRow>
+          <TableCell>
+            <Text><strong>merkle root</strong></Text>
+          </TableCell>
+          <TableCell>
+            <Text>{root}</Text>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>
+            <Text><strong>ipfs hash</strong></Text>
+          </TableCell>
+          <TableCell>
+            <Text>{ipfsHash}</Text>
+          </TableCell>
+        </TableRow>
+      </Table>
       <Table header={<TableRow><TableHeader title="Awards" /></TableRow>}>
         <TableRow>
           {hasNameField && <TableCell>
