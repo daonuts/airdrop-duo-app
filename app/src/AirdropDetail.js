@@ -12,7 +12,7 @@ function Airdrop({airdrop, onBack}){
   const { id, root, dataURI, data, awarded, userData } = airdrop
   console.log(airdrop)
 
-  const [batchSize, setBatchSize] = useState(50)
+  const [batchSize, setBatchSize] = useState(25)
 
   return (
     <React.Fragment>
@@ -43,7 +43,7 @@ async function awardToMany(api, id, awards, batchSize){
 
   let idx = 0, recipients = [], amount0s = [], amount1s = [], proofLengths = [], proofs = "0x"
   while (recipients.length < batchSize && idx < awards.length){
-    let award = awards[idx]
+    let award = awards[idx++]
     let awarded = await api.call('awarded', id, award.address).toPromise()
     console.log("here", awarded)
     if(awarded)
@@ -54,12 +54,11 @@ async function awardToMany(api, id, awards, batchSize){
     amount1s.push(award.amount1)
     proofs += award.proof.map(p=>p.slice(2)).join("")
     proofLengths.push(award.proof.length)
-    idx++
   }
 
   console.log(recipients.length)
-
-  await api.awardToMany(id, recipients, amount0s, amount1s, proofs, proofLengths).toPromise()
+  if(recipients.length)
+    await api.awardToMany(id, recipients, amount0s, amount1s, proofs, proofLengths).toPromise()
 }
 
 export default Airdrop
