@@ -50,7 +50,7 @@ function AirdropCard({airdrop, onSelect}) {
         {awarded &&
         <Info style={{marginBottom: "10px"}}>You were awarded</Info>}
         {!awarded && userData &&
-        <Info.Action style={{marginBottom: "10px"}}>You can claim <br/>{BigNumber(userData.amount0).div("1e+18").toFixed()}</Info.Action>}
+        <Info.Action style={{marginBottom: "10px"}}>You can claim <br/>{BigNumber(userData.amount0).div("1e+18").toFixed()}/{BigNumber(userData.amount1).div("1e+18").toFixed()}</Info.Action>}
       </section>
       <footer style={{display: "flex", justifyContent: "flex-end"}}>
         {!awarded && userData &&

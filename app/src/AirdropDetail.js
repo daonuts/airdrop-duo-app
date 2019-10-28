@@ -28,7 +28,7 @@ function Airdrop({airdrop, onBack}){
           </Field>
         </React.Fragment>}
       <section>
-        {data && <AwardsView awards={data.awards} />}
+        {data && <AwardsView awards={data.awards} root={root} hash={dataURI} />}
       </section>
     </React.Fragment>
   )

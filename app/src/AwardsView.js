@@ -23,6 +23,9 @@ function AwardsView({root, ipfsHash, awards}){
           <TableCell>
             <Text>Amount</Text>
           </TableCell>
+          <TableCell>
+            <Text>Amount</Text>
+          </TableCell>
         </TableRow>
         {awards.map((award,idx)=>(
           <TableRow key={idx}>

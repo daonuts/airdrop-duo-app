@@ -18,9 +18,16 @@ function NewAirdrop({onBack}) {
   const [raw, setRaw] = useState()
   const [data, setData] = useState()
   const [hash, setHash] = useState()
+  const [ipfs, setIpfs] = useState()
   const [addressField, setAddressField] = useState()
-  const [amountField, setAmountField] = useState()
+  const [amount0Field, setAmount0Field] = useState()
+  const [amount1Field, setAmount1Field] = useState()
   const form = React.createRef();
+
+  useEffect(()=>{
+    let _ipfs = ipfsClient('/ip4/127.0.0.1/tcp/5001')
+    _ipfs.id((err,id)=>!err && setIpfs(_ipfs))
+  },[])
 
   useEffect(()=>{
     if(!files || !files.length) {
@@ -36,7 +43,14 @@ function NewAirdrop({onBack}) {
       setRaw(awards)
       if(awards[0]){
         let fields = Object.keys(awards[0])
-        setAmountField( fields.find(f=>!BigNumber(awards[0][f]).isNaN()) )
+        let amountFields = fields.filter(f=>!BigNumber(awards[0][f]).isNaN())
+        if(amountFields.length > 0){
+          setAmount0Field( amountFields[0] )
+          if(amountFields.length > 1)
+            setAmount1Field( amountFields[1] )
+          else
+            setAmount1Field( amountFields[0] )
+        }
         setAddressField( fields.find(f=>isValidAddress(awards[0][f])) )
       }
     }
@@ -44,9 +58,9 @@ function NewAirdrop({onBack}) {
   }, [files])
 
   useEffect(()=>{
-    if(!raw || !addressField || !amountField) return
-    setData( merklize(raw, addressField, amountField) )
-  }, [raw, addressField, amountField])
+    if(!raw || !addressField || !amount0Field || !amount1Field) return
+    setData( merklize(raw, addressField, amount0Field, amount1Field, ["username"]) )
+  }, [raw, addressField, amount0Field, amount1Field])
 
   useEffect(()=>{
     if(!data) return setHash()
@@ -55,21 +69,21 @@ function NewAirdrop({onBack}) {
 
   const [changeFields, setChangeFields] = useState(false)
   const [viewData, setViewData] = useState(false)
-  const [doingLookup, setDoingLookup] = useState(false)
-  const [count, setCount] = useState(0)
-  const [activeProviderIdx, setActiveProviderIdx] = useState(0)
-  const providerActions = {
-    "torus:reddit": async (raw)=>{
-      setDoingLookup(true)
-      for (let i=0;i<raw.length;i++){
-        raw[i].address = await getPublicAddressTorus({verifier:"reddit", verifierId: raw[i].username.replace("u/", "")})
-        setCount(i+1)
-      }
-      setAddressField("address")
-      setDoingLookup(false)
-    }
-  }
-  const providers = Object.keys(providerActions)
+  // const [doingLookup, setDoingLookup] = useState(false)
+  // const [count, setCount] = useState(0)
+  // const [activeProviderIdx, setActiveProviderIdx] = useState(0)
+  // const providerActions = {
+  //   "torus:reddit": async (raw)=>{
+  //     setDoingLookup(true)
+  //     for (let i=0;i<raw.length;i++){
+  //       raw[i].address = await getPublicAddressTorus({verifier:"reddit", verifierId: raw[i].username.replace("u/", "")})
+  //       setCount(i+1)
+  //     }
+  //     setAddressField("address")
+  //     setDoingLookup(false)
+  //   }
+  // }
+  // const providers = Object.keys(providerActions)
 
   return (
     <React.Fragment>
@@ -77,6 +91,10 @@ function NewAirdrop({onBack}) {
         <BackButton onClick={onBack} />
       </Bar>
       <Header>Create a new airdrop</Header>
+      {ipfs
+        ? <Info style={{"marginBottom": "10px"}}>ipfs node found</Info>
+        : <Info.Alert style={{"marginBottom": "10px"}}>no local ipfs node found! please run a local ipfs node with api running on port 5001 so the airdrop data can be pinned.</Info.Alert>
+      }
       <form ref={form} onSubmit={null}>
         <Field label="Load from csv:">
           <input type="file" onChange={(e)=>setFiles(e.target.files)} />
@@ -85,7 +103,7 @@ function NewAirdrop({onBack}) {
         {raw && raw[0] &&
         <Info style={{marginBottom: "10px"}}>
           Found address column ({addressField || "unknown"}) <br/>
-          Found amount column ({amountField}) <br/>
+          Found amount column ({amount0Field}) <br/>
           <Button size="mini" onClick={()=>setChangeFields(true)}>Change this</Button>
         </Info>}
         {raw && raw[0] && changeFields &&
@@ -95,14 +113,19 @@ function NewAirdrop({onBack}) {
               {Object.keys(raw[0]).map((field, i) => <label key={i}><Radio id={field} /> {field}</label>)}
             </RadioGroup>
           </Field>
-          <Field label="Amount column:">
-            <RadioGroup onChange={(field)=>setAmountField(field)} selected={amountField}>
+          <Field label="First amount column:">
+            <RadioGroup onChange={(field)=>setAmount0Field(field)} selected={amount0Field}>
+              {Object.keys(raw[0]).map((field, i) => <label key={i}><Radio id={field} /> {field}</label>)}
+            </RadioGroup>
+          </Field>
+          <Field label="Second amount column:">
+            <RadioGroup onChange={(field)=>setAmount1Field(field)} selected={amount1Field}>
               {Object.keys(raw[0]).map((field, i) => <label key={i}><Radio id={field} /> {field}</label>)}
             </RadioGroup>
           </Field>
         </React.Fragment>}
       </form>
-      {raw && !addressField &&
+      {/*raw && !addressField &&
       <Field>
         <Info.Alert style={{marginBottom: "10px"}}>No address field detected. You can lookup addresses from a username field using the following providers:</Info.Alert>
         <DropDown style={{marginRight: "1em"}} items={providers} selected={activeProviderIdx} onChange={(idx)=>setActiveProviderIdx(idx)} />
@@ -111,19 +134,43 @@ function NewAirdrop({onBack}) {
       {doingLookup &&
       <Field>
         <Info style={{marginBottom: "10px"}}>Please wait for the address lookups to complete. {raw.length - count} left.</Info>
-      </Field>}
+      </Field>*/}
       {data && data.root && hash &&
-      <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-        <Field>
-          <Button onClick={()=>setViewData(true)}>View data</Button>
+      <React.Fragment>
+        <Info style={{"marginBottom": "10px"}}>
+          <p>View merklized data on <a target="_blank" href={`http://localhost:8080/ipfs/${hash}`}>local ipfs</a> or view on the <a target="_blank" href={`https://ipfs.eth.aragon.network/ipfs/${hash}`}>aragon ipfs node</a> (may need to propagate first).</p>
+        </Info>
+        <Field label="Download a backup of the merklized airdrop data:">
+          <Button onClick={()=>download(data)}>Download</Button>
         </Field>
-        <Field>
-          <Button mode="strong" onClick={()=>api.start(data.root, `ipfs:${hash}`).toPromise()}>Submit</Button>
-        </Field>
-      </div>}
+        <div style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
+          <Field>
+            <Button onClick={()=>setViewData(true)}>View data</Button>
+          </Field>
+          <Field>
+            <Button mode="strong" onClick={()=>api.start(data.root, `ipfs:${hash}`).toPromise()}>Submit</Button>
+          </Field>
+        </div>
+      </React.Fragment>}
       {viewData && data && <AwardsView root={data.root} ipfsHash={hash} awards={data.awards} />}
     </React.Fragment>
   )
+}
+
+async function download(data){
+  const fileData = new Blob([JSON.stringify(data)], {
+      type: "text/plain;charset=utf-8;",
+  })
+  if(window.navigator.msSaveOrOpenBlob) {
+    window.navigator.msSaveBlob(fileData, `airdrop_${new Date().toISOString().slice(0,10)}.json`);
+  } else {
+    var elem = window.document.createElement('a');
+    elem.href = window.URL.createObjectURL(fileData);
+    elem.download = `airdrop_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(elem);
+    elem.click();
+    document.body.removeChild(elem);
+  }
 }
 // <Info style={{marginBottom: "10px"}}>csv amount field name is <strong>{amountField}</strong>. <Button onClick={()=>{}} size="mini">Change this</Button></Info>
 // {data && ( hash

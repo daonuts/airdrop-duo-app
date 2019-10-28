@@ -5,16 +5,17 @@ const BigNumber = require('bignumber.js')
 
 const decimals = BigNumber(10).pow(18)
 
-module.exports = function(data, addressField, amountField, include) {
+module.exports = function(data, addressField, amount0Field, amount1Field, include) {
   const awards = data.reduce((prev, curr)=>{
     const address = curr[addressField]
     const existing = prev.find(u=>u.address===address)
-    const amount = BigNumber(curr[amountField])
+    const amount0 = BigNumber(curr[amount0Field])
+    const amount1 = BigNumber(curr[amount1Field])
     if(existing) {
-      existing.amount0 = existing.amount0 ? existing.amount0.plus(amount) : amount
-      existing.amount1 = existing.amount1 ? existing.amount1.plus(amount) : amount
+      existing.amount0 = existing.amount0 ? existing.amount0.plus(amount0) : amount0
+      existing.amount1 = existing.amount1 ? existing.amount1.plus(amount1) : amount1
     } else {
-      const award = {address, amount0: amount, amount1: amount}
+      const award = {address, amount0, amount1}
       if(Array.isArray(include)) include.forEach(f=>award[f]=curr[f])
       prev.push(award)
     }
