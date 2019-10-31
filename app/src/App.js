@@ -12,7 +12,7 @@ const ipfsGateway = location.hostname === 'localhost' ? 'http://localhost:8080/i
 
 function App() {
   const { api, network, appState, connectedAccount } = useAragonApi()
-  const { count, rawAirdrops = [], awarded, syncing } = appState
+  const { count, rawAirdrops = [], syncing } = appState
 
   const [airdrops, setAirdrops] = useState([])
   useEffect(()=>{
@@ -26,18 +26,18 @@ function App() {
     }))
   }, [rawAirdrops, connectedAccount])
 
-  const [selected, setSelected] = useState()
   const [wizard, setWizard] = useState(false)
   const [screen, setScreen] = useState()
+  const [selectedId, setSelectedId] = useState()
 
   return (
     <Main>
-      <Header primary="Airdrop" secondary={!selected && !wizard && <Button mode="strong" onClick={()=>setWizard(true)}>New airdrop</Button>} />
+      <Header primary="Airdrop" secondary={!selectedId && !wizard && <Button mode="strong" onClick={()=>setWizard(true)}>New airdrop</Button>} />
       { wizard
         ? <NewAirdrop onBack={()=>setWizard()} />
-        : selected
-          ? <AirdropDetail airdrop={selected} onBack={()=>setSelected()} />
-          : <Airdrops airdrops={airdrops} onSelect={setSelected} />
+        : selectedId
+          ? <AirdropDetail {...airdrops.find(a=>a.id==selectedId)} onBack={()=>setSelectedId()} />
+          : <Airdrops airdrops={airdrops} onSelect={setSelectedId} />
       }
     </Main>
   )

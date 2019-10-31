@@ -7,10 +7,10 @@ import {
 import AwardsView from './AwardsView'
 const NULL_ADDRESS = "0x0000000000000000000000000000000000000000"
 
-function Airdrop({airdrop, onBack}){
+function Airdrop({id, root, dataURI, data, awarded, userData, onBack}){
   const { api, connectedAccount } = useAragonApi()
-  const { id, root, dataURI, data, awarded, userData } = airdrop
-  console.log(airdrop)
+  // const { id, root, dataURI, data, awarded, userData } = airdrop
+  console.log(id, root, dataURI, data, awarded, userData)
 
   const [batchSize, setBatchSize] = useState(25)
 

@@ -7,27 +7,47 @@ import {
 import BigNumber from 'bignumber.js'
 
 function Airdrops({airdrops, onSelect}){
+
+
+  const [retrieving, setRetrieving] = useState([])
+  const [ready, setReady] = useState([])
+  const [archived, setArchived] = useState([])
+  useEffect(()=>{
+    setRetrieving( airdrops.filter(a=>(!a.data)) )
+    setReady( airdrops.filter(a=>(a.data && !a.awarded && a.userData)) )
+    setArchived( airdrops.filter(a=>(a.data && (a.awarded || !a.userData))) )
+  },[airdrops])
+
   return (
     <React.Fragment>
+      {retrieving.length ?
+      <section>
+        <h2 size="xlarge">Retrieving data:</h2>
+        <CardLayout columnWidthMin={30 * GU} rowHeight={250}>
+          {retrieving.map((d, i)=><AirdropCard {...d} key={d.id} onSelect={onSelect} />)}
+        </CardLayout>
+      </section> : null}
+      {ready.length ?
       <section>
         <h2 size="xlarge">Ready to claim:</h2>
         <CardLayout columnWidthMin={30 * GU} rowHeight={250}>
-          {airdrops.filter(a=>(!a.awarded && a.userData)).map((d, i)=><AirdropCard airdrop={d} key={d.id} onSelect={onSelect} />)}
+          {ready.map((d, i)=><AirdropCard {...d} key={d.id} onSelect={onSelect} />)}
         </CardLayout>
-      </section>
+      </section> : null}
+      {archived.length ?
       <section>
         <h2 size="xlarge">Archive:</h2>
         <CardLayout columnWidthMin={30 * GU} rowHeight={150}>
-          {airdrops.filter(a=>(a.awarded || !a.userData)).map((d, i)=><AirdropCard airdrop={d} key={d.id} onSelect={onSelect} />)}
+          {archived.map((d, i)=><AirdropCard {...d} key={d.id} onSelect={onSelect} />)}
         </CardLayout>
-      </section>
+      </section> : null}
     </React.Fragment>
   )
 }
 
-function AirdropCard({airdrop, onSelect}) {
+function AirdropCard({id, root, dataURI, data, awarded, userData, onSelect}) {
   const { api, connectedAccount } = useAragonApi()
-  const { id, root, dataURI, data, awarded, userData } = airdrop
+  // const { id, root, dataURI, data, awarded, userData } = airdrop
 
   return (
     <Card css={`
@@ -37,7 +57,7 @@ function AirdropCard({airdrop, onSelect}) {
         grid-gap: ${1 * GU}px;
         padding: ${3 * GU}px;
         cursor: pointer;
-    `} onClick={()=>onSelect(airdrop)}>
+    `} onClick={()=>onSelect(id)}>
       <header style={{display: "flex", justifyContent: "space-between"}}>
         <Text color={theme.textTertiary}>#{id}</Text>
         <IconArrowRight color={theme.textTertiary} />
