@@ -18,6 +18,7 @@ import "@aragon/os/contracts/apm/APMNamehash.sol";
 
 import "@aragon/apps-token-manager/contracts/TokenManager.sol";
 import "@aragon/apps-shared-minime/contracts/MiniMeToken.sol";
+import "@daonuts/token/contracts/Token.sol";
 
 import "./AirdropDuo.sol";
 
@@ -51,13 +52,13 @@ contract TemplateBase is APMNamehash {
 
 
 contract Template is TemplateBase {
-    MiniMeTokenFactory tokenFactory;
+    /* MiniMeTokenFactory tokenFactory; */
 
     uint64 constant PCT = 10 ** 16;
     address constant ANY_ENTITY = address(-1);
 
     constructor(ENS ens) TemplateBase(DAOFactory(0), ens) public {
-        tokenFactory = new MiniMeTokenFactory();
+        /* tokenFactory = new MiniMeTokenFactory(); */
     }
 
     function newInstance() public {
@@ -73,15 +74,17 @@ contract Template is TemplateBase {
         TokenManager contribManager = TokenManager(dao.newAppInstance(tokenManagerAppId, latestVersionAppBase(tokenManagerAppId)));
         TokenManager currencyManager = TokenManager(dao.newAppInstance(tokenManagerAppId, latestVersionAppBase(tokenManagerAppId)));
 
-        MiniMeToken contrib = tokenFactory.createCloneToken(MiniMeToken(0), 0, "Contrib", 18, "CONTRIB", false);
-        MiniMeToken currency = tokenFactory.createCloneToken(MiniMeToken(0), 0, "Currency", 18, "CURRENCY", true);
+        /* MiniMeToken contrib = tokenFactory.createCloneToken(MiniMeToken(0), 0, "Contrib", 18, "CONTRIB", false); */
+        Token contrib = new Token("Contrib", 18, "CONTRIB", false);
+        /* MiniMeToken currency = tokenFactory.createCloneToken(MiniMeToken(0), 0, "Currency", 18, "CURRENCY", true); */
+        Token currency = new Token("Currency", 18, "CURRENCY", true);
         contrib.changeController(contribManager);
         currency.changeController(currencyManager);
 
         // Initialize apps
-        contribManager.initialize(contrib, false, 0);
+        contribManager.initialize(MiniMeToken(contrib), false, 0);
         emit InstalledApp(contribManager, tokenManagerAppId);
-        currencyManager.initialize(currency, true, 0);
+        currencyManager.initialize(MiniMeToken(currency), true, 0);
         emit InstalledApp(currencyManager, tokenManagerAppId);
         airdrop.initialize(contribManager, currencyManager);
         emit InstalledApp(airdrop, airdropDuoAppId);
