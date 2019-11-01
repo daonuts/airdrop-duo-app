@@ -86,8 +86,8 @@ contract Template is TemplateBase {
         currencyManager.initialize(MiniMeToken(currency), true, 0);
         emit InstalledApp(currencyManager, tokenManagerAppId);
         bytes32 root = 0xac81c88a186bb6fe95c6c535393296ae7ee104565508deda9339238ef005bc51;
-        string memory ipfsHash = "ipfs:QmWaQSbFqygCkKj6b8HfamwPavPYcRPCbsEdMZRPBetL8S";
-        airdrop.initialize(contribManager, currencyManager, root, ipfsHash);
+        string memory dataURI = "ipfs:QmWaQSbFqygCkKj6b8HfamwPavPYcRPCbsEdMZRPBetL8S";
+        airdrop.initialize(contribManager, currencyManager, root, dataURI);
         /* airdrop.initialize(contribManager, currencyManager, bytes32(0), ""); */
         emit InstalledApp(airdrop, airdropDuoAppId);
 
