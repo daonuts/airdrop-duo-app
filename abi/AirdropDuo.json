@@ -354,6 +354,14 @@
         {
           "name": "_tokenManager1",
           "type": "address"
+        },
+        {
+          "name": "_root",
+          "type": "bytes32"
+        },
+        {
+          "name": "_dataURI",
+          "type": "string"
         }
       ],
       "name": "initialize",

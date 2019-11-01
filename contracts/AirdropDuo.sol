@@ -28,11 +28,14 @@ contract AirdropDuo is AragonApp {
     string private constant ERROR_AWARDED = "AWARDED";
     string private constant ERROR_INVALID = "INVALID";
 
-    function initialize(address _tokenManager0, address _tokenManager1) onlyInit public {
+    function initialize(address _tokenManager0, address _tokenManager1, bytes32 _root, string _dataURI) onlyInit public {
         initialized();
 
         tokenManager0 = TokenManager(_tokenManager0);
         tokenManager1 = TokenManager(_tokenManager1);
+
+        if(_root != bytes32(0) && bytes(_dataURI).length != 0)
+          _start(_root, _dataURI);
     }
 
     /**

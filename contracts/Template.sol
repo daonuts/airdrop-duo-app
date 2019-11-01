@@ -66,7 +66,6 @@ contract Template is TemplateBase {
         ACL acl = ACL(dao.acl());
         acl.createPermission(this, dao, dao.APP_MANAGER_ROLE(), this);
 
-        address root = msg.sender;
         bytes32 airdropDuoAppId = keccak256(abi.encodePacked(apmNamehash("open"), keccak256("airdrop-duo-app")));
         bytes32 tokenManagerAppId = apmNamehash("token-manager");
 
@@ -86,35 +85,38 @@ contract Template is TemplateBase {
         emit InstalledApp(contribManager, tokenManagerAppId);
         currencyManager.initialize(MiniMeToken(currency), true, 0);
         emit InstalledApp(currencyManager, tokenManagerAppId);
-        airdrop.initialize(contribManager, currencyManager);
+        bytes32 root = 0xac81c88a186bb6fe95c6c535393296ae7ee104565508deda9339238ef005bc51;
+        string memory ipfsHash = "ipfs:QmWaQSbFqygCkKj6b8HfamwPavPYcRPCbsEdMZRPBetL8S";
+        airdrop.initialize(contribManager, currencyManager, root, ipfsHash);
+        /* airdrop.initialize(contribManager, currencyManager, bytes32(0), ""); */
         emit InstalledApp(airdrop, airdropDuoAppId);
 
-        acl.createPermission(root, contribManager, contribManager.BURN_ROLE(), root);
-        acl.createPermission(root, currencyManager, currencyManager.BURN_ROLE(), root);
-        acl.createPermission(root, airdrop, airdrop.START_ROLE(), root);
+        acl.createPermission(msg.sender, contribManager, contribManager.BURN_ROLE(), msg.sender);
+        acl.createPermission(msg.sender, currencyManager, currencyManager.BURN_ROLE(), msg.sender);
+        acl.createPermission(msg.sender, airdrop, airdrop.START_ROLE(), msg.sender);
         acl.createPermission(this, contribManager, contribManager.MINT_ROLE(), this);
         acl.createPermission(this, currencyManager, currencyManager.MINT_ROLE(), this);
 
-        contribManager.mint(root, 100000 * 10**18); // Give 1 token to each holder
-        currencyManager.mint(root, 100000 * 10**18); // Give 1 token to each holder
+        contribManager.mint(msg.sender, 100000 * 10**18); // Give 1 token to each holder
+        currencyManager.mint(msg.sender, 100000 * 10**18); // Give 1 token to each holder
 
         // Clean up permissions
 
         acl.grantPermission(airdrop, contribManager, contribManager.MINT_ROLE());
         acl.revokePermission(this, contribManager, contribManager.MINT_ROLE());
-        acl.setPermissionManager(root, contribManager, contribManager.MINT_ROLE());
+        acl.setPermissionManager(msg.sender, contribManager, contribManager.MINT_ROLE());
 
         acl.grantPermission(airdrop, currencyManager, currencyManager.MINT_ROLE());
         acl.revokePermission(this, currencyManager, currencyManager.MINT_ROLE());
-        acl.setPermissionManager(root, currencyManager, currencyManager.MINT_ROLE());
+        acl.setPermissionManager(msg.sender, currencyManager, currencyManager.MINT_ROLE());
 
-        acl.grantPermission(root, dao, dao.APP_MANAGER_ROLE());
+        acl.grantPermission(msg.sender, dao, dao.APP_MANAGER_ROLE());
         acl.revokePermission(this, dao, dao.APP_MANAGER_ROLE());
-        acl.setPermissionManager(root, dao, dao.APP_MANAGER_ROLE());
+        acl.setPermissionManager(msg.sender, dao, dao.APP_MANAGER_ROLE());
 
-        acl.grantPermission(root, acl, acl.CREATE_PERMISSIONS_ROLE());
+        acl.grantPermission(msg.sender, acl, acl.CREATE_PERMISSIONS_ROLE());
         acl.revokePermission(this, acl, acl.CREATE_PERMISSIONS_ROLE());
-        acl.setPermissionManager(root, acl, acl.CREATE_PERMISSIONS_ROLE());
+        acl.setPermissionManager(msg.sender, acl, acl.CREATE_PERMISSIONS_ROLE());
 
         emit DeployDao(dao);
     }
