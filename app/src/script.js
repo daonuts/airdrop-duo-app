@@ -31,8 +31,11 @@ api.store(
     return newState
   },
   {
-    init: async function(){
-      return { rawAirdrops: [] }
+    init: async function(cachedState){
+      return {
+        rawAirdrops: [],
+      ...cachedState
+      }
     }
   }
 )
