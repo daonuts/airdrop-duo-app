@@ -106,7 +106,7 @@ function NewAirdrop({onBack}) {
         <Info style={{marginBottom: "10px"}}>
           {addressField ? `Address column: '${addressField}'` : `!No address column!`} <br/>
           {amount0Field ? `First amount column: '${amount0Field}'` : `!No amount column!`} <br/>
-          {amount1Field !== amount0Field ? `Second amount column: '${amount0Field}'` : `No (optional) second amount column has been set. Both tokens will mint using '${amount0Field}'.`} <br/>
+          {amount1Field !== amount0Field ? `Second amount column: '${amount1Field}'` : `No (optional) second amount column has been set. Both tokens will mint using '${amount0Field}'.`} <br/>
           <Button size="mini" onClick={()=>setChangeFields(true)}>Change</Button>
         </Info>}
         {raw && raw[0] && !addressField &&

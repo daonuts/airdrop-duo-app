@@ -1,6 +1,6 @@
 {
 	"name": "@daonuts/airdrop-duo",
-	"version": "0.0.6",
+	"version": "0.0.8",
 	"description": "",
 	"dependencies": {
 		"@aragon/api": "^2.0.0-beta.6",
