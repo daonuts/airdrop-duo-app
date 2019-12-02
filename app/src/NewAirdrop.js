@@ -51,7 +51,9 @@ function NewAirdrop({onBack}) {
           else
             setAmount1Field( amountFields[0] )
         }
-        setAddressField( fields.find(f=>isValidAddress(awards[0][f])) )
+        let addressField = fields.find(f=>isValidAddress(awards[0][f]))
+        if(addressField)
+          setAddressField( addressField )
       }
     }
     reader.readAsText(files[0])
@@ -102,10 +104,18 @@ function NewAirdrop({onBack}) {
         </Field>
         {raw && raw[0] &&
         <Info style={{marginBottom: "10px"}}>
-          Found address column ({addressField || "unknown"}) <br/>
-          Found amount column ({amount0Field}) <br/>
-          <Button size="mini" onClick={()=>setChangeFields(true)}>Change this</Button>
+          {addressField ? `Address column: '${addressField}'` : `!No address column!`} <br/>
+          {amount0Field ? `First amount column: '${amount0Field}'` : `!No amount column!`} <br/>
+          {amount1Field !== amount0Field ? `Second amount column: '${amount0Field}'` : `No (optional) second amount column has been set. Both tokens will mint using '${amount0Field}'.`} <br/>
+          <Button size="mini" onClick={()=>setChangeFields(true)}>Change</Button>
         </Info>}
+        {raw && raw[0] && !addressField &&
+        <Info.Alert style={{marginBottom: "10px"}}>
+          No address column found, please choose the column that contains recipient addresses.
+          <RadioGroup onChange={(field)=>setAddressField(field)} selected={addressField}>
+            {Object.keys(raw[0]).map((field, i) => <label key={i}><Radio id={field} /> {field}</label>)}
+          </RadioGroup>
+        </Info.Alert>}
         {raw && raw[0] && changeFields &&
         <React.Fragment>
           <Field label="Address column:">
