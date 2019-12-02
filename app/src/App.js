@@ -16,12 +16,13 @@ function App() {
 
   const [airdrops, setAirdrops] = useState([])
   useEffect(()=>{
+    if(!connectedAccount) return
     if(!rawAirdrops || !rawAirdrops.length) return
     if(!airdrops.length) setAirdrops(rawAirdrops)
     Promise.all(rawAirdrops.map(async (a)=>{
       a.awarded = await api.call('awarded', a.id, connectedAccount).toPromise()
       if(!a.data) a.data = await (await fetch(`${ipfsGateway}/${a.dataURI.split(':')[1]}`)).json()
-      a.userData = a.data.awards.find(d=>d.address===connectedAccount)
+      a.userData = a.data.awards.find(d=>d.address.toLowerCase()===connectedAccount.toLowerCase())
       setAirdrops(rawAirdrops.slice())
     }))
   }, [rawAirdrops, connectedAccount])
