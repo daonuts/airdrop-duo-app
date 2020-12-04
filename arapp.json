@@ -1,0 +1,31 @@
+{
+  "roles": [
+    {
+      "name": "Start a new distribution",
+      "id": "START_ROLE",
+      "params": []
+    }
+  ],
+  "environments": {
+    "default": {
+      "network": "development",
+      "appName": "airdrop-duo-app.open.aragonpm.eth"
+    },
+    "docker": {
+      "network": "docker",
+      "appName": "airdrop-duo-app.open.aragonpm.eth"
+    },
+    "rinkeby": {
+      "registry": "0x98df287b6c145399aaa709692c8d308357bc085d",
+      "appName": "airdrop-duo-app.open.aragonpm.eth",
+      "network": "rinkeby"
+    },
+    "mainnet": {
+      "registry": "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e",
+      "appName": "airdrop-duo-app.open.aragonpm.eth",
+      "network": "mainnet"
+    }
+  },
+  "appName": "airdrop-duo-app.open.aragonpm.eth",
+  "path": "contracts/AirdropDuo.sol"
+}
