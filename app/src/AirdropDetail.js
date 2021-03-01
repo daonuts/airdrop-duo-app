@@ -29,7 +29,7 @@ function Airdrop({id, root, dataURI, data, awarded, userData, onBack}){
           </Field>
         </React.Fragment>}
       <section>
-        {data && <AwardsView awards={data.awards} root={root} ipfsHash={dataURI.replace("ipfs:","")} />}
+        {data && <AwardsView id={id} awards={data.awards} root={root} ipfsHash={dataURI.replace("ipfs:","")} />}
       </section>
     </React.Fragment>
   )

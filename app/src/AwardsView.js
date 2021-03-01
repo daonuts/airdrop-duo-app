@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { AddressField, Table, TableCell, TableHeader, TableRow, Text, theme } from '@aragon/ui'
+import { useAragonApi } from '@aragon/api-react'
+import { AddressField, Button, Table, TableCell, TableHeader, TableRow, Text, theme } from '@aragon/ui'
 
-function AwardsView({root, ipfsHash, awards}){
+function AwardsView({id, root, ipfsHash, awards}){
+  const { api, connectedAccount } = useAragonApi()
 
   const [hasNameField, setHasNameField] = useState()
   useEffect(()=>{
@@ -11,6 +13,14 @@ function AwardsView({root, ipfsHash, awards}){
   return (
     <React.Fragment>
       <Table>
+        <TableRow>
+          <TableCell>
+            <Text><strong>id</strong></Text>
+          </TableCell>
+          <TableCell>
+            <Text>{id}</Text>
+          </TableCell>
+        </TableRow>
         <TableRow>
           <TableCell>
             <Text><strong>merkle root</strong></Text>
@@ -42,6 +52,8 @@ function AwardsView({root, ipfsHash, awards}){
           <TableCell>
             <Text>Amount</Text>
           </TableCell>
+          <TableCell>
+          </TableCell>
         </TableRow>
         {awards.map((award,idx)=>(
           <TableRow key={idx}>
@@ -49,6 +61,7 @@ function AwardsView({root, ipfsHash, awards}){
             <TableCell><AddressField address={award.address} /></TableCell>
             <TableCell><Text>{award.amount0}</Text></TableCell>
             <TableCell><Text>{award.amount1}</Text></TableCell>
+            <TableCell><Button size="mini" onClick={(e)=>{e.stopPropagation();api.award(id, award.address, award.amount0, award.amount1, award.proof).toPromise();}}>Award</Button></TableCell>
           </TableRow>
         ))}
       </Table>

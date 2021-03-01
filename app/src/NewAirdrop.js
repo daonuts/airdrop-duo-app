@@ -9,7 +9,7 @@ import BigNumber from 'bignumber.js'
 import merklize from './merklize'
 import ipfsClient from 'ipfs-http-client'
 // import IpfsHttpClient from 'ipfs-http-client'
-const ipfs = ipfsClient('/ip4/127.0.0.1/tcp/5001')
+// const ipfs = ipfsClient('/ip4/127.0.0.1/tcp/5001')
 import csv from 'csvtojson'
 import { isValidAddress } from 'ethereumjs-util'
 
@@ -75,7 +75,7 @@ function NewAirdrop({onBack}) {
 
   useEffect(()=>{
     if(!data) return setHash()
-    addToIPFS(data).then(setHash)
+    addToIPFS(data).then(setHash).catch(console.log)
   }, [data])
 
   const [changeFields, setChangeFields] = useState(false)
@@ -87,10 +87,10 @@ function NewAirdrop({onBack}) {
         <BackButton onClick={onBack} />
       </Bar>
       <Header>Create a new airdrop</Header>
-      {ipfs
+      {/*ipfs
         ? <Info style={{"marginBottom": "10px"}}>ipfs node found</Info>
         : <Info.Alert style={{"marginBottom": "10px"}}>no local ipfs node found! please run a local ipfs node with api running on port 5001 so the airdrop data can be pinned.</Info.Alert>
-      }
+      */}
       <form ref={form} onSubmit={null}>
         <Field label="Load from csv:">
           <input type="file" onChange={(e)=>setFiles(e.target.files)} />
@@ -147,6 +147,14 @@ function NewAirdrop({onBack}) {
         </div>
       </React.Fragment>}
       {viewData && data && <AwardsView root={data.root} ipfsHash={hash} awards={data.awards} />}
+      {data && !hash &&
+      <React.Fragment>
+      <Info style={{"marginBottom": "10px"}}>could not pin to ipfs</Info>
+      <Field label="Optionally manually set hash:">
+        <input type="input" onChange={(e)=>setHash(e.target.value)} />
+      </Field>
+      </React.Fragment>
+      }
     </React.Fragment>
   )
 }
@@ -168,9 +176,10 @@ async function download(data){
 }
 
 async function addToIPFS(data){
-  // let ipfs = ipfsClient('/ip4/127.0.0.1/tcp/5001')
+  let ipfs = ipfsClient('/ip4/127.0.0.1/tcp/5001')
   let added = await ipfs.add(JSON.stringify(data))
   for await (const item of added) {
+    console.log(item)
     return item && item.path ? item.path : null
   }
 }
